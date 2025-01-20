@@ -27,15 +27,15 @@ jobs:
       run: mvn clean package -Dmaven.test.skip=true
 
     - name: 列出目标目录中的文件
-      run: ls -l target/
+      run: ls -l ./target/
 
     - name: 上传 JAR 文件作为工件
       uses: actions/upload-artifact@v4
       with:
         name: rocketmq-dashboard
-        path: target/rocketmq-dashboard-*.jar
+        path: ./target/rocketmq-dashboard-*.jar
 
-  deploy:
+  upload_to_rocketmq_dashboard:
     runs-on: ubuntu-latest
     needs: build
 
@@ -48,8 +48,7 @@ jobs:
         path: rocketmq-dashboard
 
     - name: 复制 JAR 文件以部署存储库
-      run: |
-        cp target/rocketmq-dashboard-*.jar ./rocketmq-dashboard/
+      run: cp ./target/rocketmq-dashboard-*.jar ./rocketmq-dashboard/
     
     - name: 提交 JAR 并将其推送到 RocketMQ-dashboard-jar 存储库
       run: |
