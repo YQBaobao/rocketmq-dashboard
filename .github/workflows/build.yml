@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '11'
-        distribution: 'adoptopenjdk'
+        distribution: 'adoptium'
 
     - name: 构建 RocketMQ 仪表板 JAR
       run: |
