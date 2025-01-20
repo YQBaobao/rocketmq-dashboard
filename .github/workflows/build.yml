@@ -24,7 +24,7 @@ jobs:
 
     - name: 构建 RocketMQ 仪表板 JAR
       run: |
-        ./mvn clean package -Dmaven.test.skip=true
+        ./mvnw clean package -Dmaven.test.skip=true
 
     - name: 上传 JAR 文件作为工件
       uses: actions/upload-artifact@v4
