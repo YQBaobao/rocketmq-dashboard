@@ -1,4 +1,4 @@
-name: Sync Fork with Upstream
+name: 与上游同步分叉
 
 on:
   schedule:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout the fork repository
+    - name: 检查 fork 存储库
       uses: actions/checkout@v2
 
     - name: Set up Git
