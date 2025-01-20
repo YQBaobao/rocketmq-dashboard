@@ -46,7 +46,10 @@ jobs:
         repository: YQBaobao/rocketmq-dashboard
         token: ${{ secrets.ACTIONS_TOKEN }}
         path: rocketmq-dashboard
-
+    
+    - name: 列出目标目录中的文件
+      run: ls -l ./target/
+  
     - name: 复制 JAR 文件以部署存储库
       run: cp ./target/rocketmq-dashboard-*.jar ./rocketmq-dashboard/
     
