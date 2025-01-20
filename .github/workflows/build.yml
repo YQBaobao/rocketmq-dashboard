@@ -46,11 +46,11 @@ jobs:
 
     - name: 复制 JAR 文件以部署存储库
       run: |
-        cp target/rocketmq-dashboard-*.jar ../rocketmq-dashboard/
+        cp target/rocketmq-dashboard-*.jar ./rocketmq-dashboard/
     
     - name: 提交 JAR 并将其推送到 RocketMQ-dashboard-jar 存储库
       run: |
-        cd ../rocketmq-dashboard
+        cd rocketmq-dashboard
         git config --global user.name "GitHub Actions"
         git config --global user.email "actions@github.com"
         git add .
