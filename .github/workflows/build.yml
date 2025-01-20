@@ -39,7 +39,7 @@ jobs:
     - name: Checkout rocketmq-dashboard-jar repository
       uses: actions/checkout@v2
       with:
-        repository: YOUR_USER/rocketmq-dashboard-jar
+        repository: YQBaobao/rocketmq-dashboard
         token: ${{ secrets.GITHUB_TOKEN }}
         path: rocketmq-dashboard-jar
 
