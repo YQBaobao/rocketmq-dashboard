@@ -40,7 +40,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: YQBaobao/rocketmq-dashboard
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.ACTIONS_TOKEN }}
         path: rocketmq-dashboard
 
     - name: 复制 JAR 文件以部署存储库
