@@ -21,7 +21,6 @@ jobs:
       with:
         java-version: '21'
         distribution: 'temurin'
-    - run: java HelloWorldApp.java
 
     - name: 构建 RocketMQ 仪表板 JAR
       run: |
