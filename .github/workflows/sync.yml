@@ -26,7 +26,7 @@ jobs:
     - name: Merge upstream changes into fork
       run: |
         git checkout master
-        git merge upstream/master
+        git merge upstream/master --allow-unrelated-histories
 
     - name: Push changes to fork
       run: |
