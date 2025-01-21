@@ -78,19 +78,14 @@ jobs:
           echo "No JAR file found!"  # 如果没有找到文件，输出提示
           exit 1
         fi
+
+        # 调试：打印完整的 API 响应
+        echo "Response from create release: $RESPONSE"
         
         # 获取上传 URL
         upload_url=$(echo "$RESPONSE" | jq -r .upload_url)
-        
-        # 打印上传 URL 进行调试
         echo "Upload URL: $upload_url" 
         
-        # 确保 upload_url 被正确解析
-        if [[ -z "$upload_url" ]]; then
-          echo "No upload_url found in the response!"
-          exit 1
-        fi
-    
         # 处理 upload_url 中的 {?name,label}
         upload_url=$(echo "$upload_url" | sed -e "s/{?name,label}//")
 
