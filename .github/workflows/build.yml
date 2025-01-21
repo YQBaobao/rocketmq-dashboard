@@ -60,10 +60,11 @@ jobs:
           -H "Authorization: token ${{ secrets.ACTIONS_TOKEN }}" \
           -d '{"tag_name": "'$VERSION'", "name": "'$VERSION'", "body": "Release version '$VERSION'", "draft": false, "prerelease": false}' \
           "https://api.github.com/repos/YQBaobao/rocketmq-dashboard/releases")
-        
-        echo "Release created: $RESPONSE"
-        echo "::set-output name=response::$RESPONSE"  # 设置输出变量
-        
+          
+        echo "Response from create release: $RESPONSE"
+        # 使用 env 设置环境变量
+        echo "UPLOAD_URL=$(echo $RESPONSE | jq -r .upload_url | sed -e 's/{?name,label}//')" >> $GITHUB_ENV
+
     - name: 找到 JAR 文件
       id: find_jar
       run: |
@@ -80,15 +81,8 @@ jobs:
           exit 1
         fi
 
-        # 调试：打印完整的 API 响应
-        echo "Response from create release: $RESPONSE"
-        
-        # 获取上传 URL
-        upload_url=$(echo "$RESPONSE" | jq -r .upload_url)
-        echo "Upload URL: $upload_url" 
-        
-        # 处理 upload_url 中的 {?name,label}
-        upload_url=$(echo "$upload_url" | sed -e "s/{?name,label}//")
+        # 使用环境变量传递 upload_url
+        echo "Final upload_url: $UPLOAD_URL"
 
         # 上传 JAR 文件到 GitHub Release
         curl -X POST --data-binary @$JAR_FILE \
