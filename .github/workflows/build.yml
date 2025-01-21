@@ -79,7 +79,7 @@ jobs:
           exit 1
         fi
         # 上传 JAR 文件到 GitHub Release
-        upload_url=$(echo $RESPONSE | jq -r .upload_url | sed -e "s/{?name,label}//")
+        upload_url=$(echo $RESPONSE | jq -r upload_url | sed -e "s/{?name,label}//")
         echo "Upload URL: $upload_url"
         curl -X POST --data-binary @$JAR_FILE \
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
