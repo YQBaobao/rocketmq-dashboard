@@ -80,17 +80,20 @@ jobs:
         fi
         
         # 获取上传 URL
-        upload_url=$(echo $RESPONSE | jq -r .upload_url | sed -e "s/{?name,label}//")
-
+        upload_url=$(echo "$RESPONSE" | jq -r .upload_url)
+        
+        # 打印上传 URL 进行调试
+        echo "Upload URL: $upload_url" 
+        
         # 确保 upload_url 被正确解析
         if [[ -z "$upload_url" ]]; then
           echo "No upload_url found in the response!"
           exit 1
         fi
-        
-        # 打印上传 URL 进行调试
-        echo "Upload URL: $upload_url" 
-        
+    
+        # 处理 upload_url 中的 {?name,label}
+        upload_url=$(echo "$upload_url" | sed -e "s/{?name,label}//")
+
         # 上传 JAR 文件到 GitHub Release
         curl -X POST --data-binary @$JAR_FILE \
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
