@@ -62,13 +62,25 @@ jobs:
           "https://api.github.com/repos/YQBaobao/rocketmq-dashboard/releases")
         
         echo "Release created: $RESPONSE"
-
+    
+    - name: 找到 JAR 文件
+      id: find_jar
+      run: |
+        JAR_FILE=$(find target -name "rocketmq-dashboard-*.jar" -print -quit)
+        echo "Found JAR file: $JAR_FILE"
+        echo "::set-output name=jar_file::$JAR_FILE"  # 设置输出变量
+    
     - name: 上传JAR到GitHub发布
       run: |
         VERSION="v$(date +'%Y.%m.%d.%H%M%S')"  # 使用当前时间戳作为版本号，或手动设置
-        # 上传 JAR 文件到创建的 Release
+        JAR_FILE="${{ steps.find_jar.outputs.jar_file }}"  # 获取 find_jar 步骤中的输出文件路径
+        if [[ -z "$JAR_FILE" ]]; then
+          echo "No JAR file found!"  # 如果没有找到文件，输出提示
+          exit 1
+        fi
+        # 上传 JAR 文件到 GitHub Release
         upload_url=$(echo $RESPONSE | jq -r .upload_url | sed -e "s/{?name,label}//")
-        curl -X POST --data-binary @target/rocketmq-dashboard-*.jar \
-          -H "Authorization: token ${{ secrets.ACTIONS_TOKEN }}" \
+        curl -X POST --data-binary @$JAR_FILE \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Content-Type: application/octet-stream" \
-          "$upload_url?name=rocketmq-dashboard-*.jar"
+          "$upload_url?name=$(basename $JAR_FILE)"  # 使用文件名作为上传时的文件名
