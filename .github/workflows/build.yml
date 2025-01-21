@@ -62,7 +62,8 @@ jobs:
           "https://api.github.com/repos/YQBaobao/rocketmq-dashboard/releases")
         
         echo "Release created: $RESPONSE"
-    
+        echo "::set-output name=response::$RESPONSE"  # 设置输出变量
+        
     - name: 找到 JAR 文件
       id: find_jar
       run: |
