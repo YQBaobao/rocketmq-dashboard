@@ -1,4 +1,4 @@
-name: 构建和部署 RocketMQ 仪表板
+name: 构建和发布 RocketMQ 仪表板
 
 on:
   push:
@@ -78,9 +78,20 @@ jobs:
           echo "No JAR file found!"  # 如果没有找到文件，输出提示
           exit 1
         fi
+        
+        # 获取上传 URL
+        upload_url=$(echo $RESPONSE | jq -r .upload_url | sed -e "s/{?name,label}//")
+
+        # 确保 upload_url 被正确解析
+        if [[ -z "$upload_url" ]]; then
+          echo "No upload_url found in the response!"
+          exit 1
+        fi
+        
+        # 打印上传 URL 进行调试
+        echo "Upload URL: $upload_url" 
+        
         # 上传 JAR 文件到 GitHub Release
-        upload_url=$(echo $RESPONSE | jq -r upload_url | sed -e "s/{?name,label}//")
-        echo "Upload URL: $upload_url"
         curl -X POST --data-binary @$JAR_FILE \
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Content-Type: application/octet-stream" \
