@@ -2,7 +2,8 @@ name: 与上游同步分叉
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天自动同步
+    # - cron: '0 0 * * *'  # 每天自动同步
+    - cron: '0 0 1-31/3 * *' # 每3天在UTC时间午夜运行一次
   workflow_dispatch:
 
 jobs:
