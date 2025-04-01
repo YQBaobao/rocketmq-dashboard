@@ -7,9 +7,6 @@ on:
   pull_request:
     branches:
       - master
-# 环境
-env:
-  SERVER: secrets
 
 jobs:
   build:
@@ -36,7 +33,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: YQBaobao/rocketmq-dashboard
-          token: ${{ secrets.ACTIONS_TOKEN }}
+          token: ${{ secrets.secrets.ACTIONS_TOKEN }}
           path: rocketmq-dashboard
 
       # - name: 创建 target 目录
