@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: YQBaobao/rocketmq-dashboard
-          token: ${{ secrets.ACTIONS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           path: rocketmq-dashboard
 
       # - name: 创建 target 目录
@@ -55,7 +55,7 @@ jobs:
           # 获取最新的 Git tag
           VERSION="v$(date +'%Y.%m.%d.%H%M%S')"  # 使用当前时间戳作为版本号，或手动设置
           RESPONSE=$(curl -X POST \
-            -H "Authorization: token ${{ secrets.ACTIONS_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -d '{"tag_name": "'$VERSION'", "name": "'$VERSION'", "body": "Release version '$VERSION'", "draft": false, "prerelease": false}' \
             "https://api.github.com/repos/YQBaobao/rocketmq-dashboard/releases")
           
