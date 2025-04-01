@@ -1,0 +1,91 @@
+name: 构建和发布 RocketMQ 仪表板
+
+on:
+  push:
+    branches:
+      - master # 或者你想要触发的分支
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 查看 RocketMQ 仪表板存储库
+        uses: actions/checkout@v4
+
+      - name: 设置 JDK 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          architecture: x64
+
+      - name: 构建 RocketMQ 仪表板 JAR
+        run: mvn clean package -Dmaven.test.skip=true
+
+      - name: 列出目标目录中的文件
+        run: ls -l ./target/
+
+      - name: 查看 Rocketmq-dashboard 存储库
+        uses: actions/checkout@v4
+        with:
+          repository: YQBaobao/rocketmq-dashboard
+          token: ${{ secrets.ACTIONS_TOKEN }}
+          path: rocketmq-dashboard
+
+      # - name: 创建 target 目录
+      #   run: mkdir ./rocketmq-dashboard/target
+
+      # - name: 复制 JAR 文件以部署存储库
+      #   run: cp ./target/rocketmq-dashboard-*.jar ./rocketmq-dashboard/target
+
+      # - name: 提交 JAR 并将其推送到 RocketMQ-dashboard-jar 存储库
+      #   run: |
+      #     cd rocketmq-dashboard
+      #     git config --global user.name "GitHub Actions"
+      #     git config --global user.email "actions@github.com"
+      #     git add .
+      #     git commit -m "Update rocketmq-dashboard JAR"
+      #     git push origin master
+
+      - name: 创建发布
+        id: create_release
+        run: |
+          # 获取最新的 Git tag
+          VERSION="v$(date +'%Y.%m.%d.%H%M%S')"  # 使用当前时间戳作为版本号，或手动设置
+          RESPONSE=$(curl -X POST \
+            -H "Authorization: token ${{ secrets.ACTIONS_TOKEN }}" \
+            -d '{"tag_name": "'$VERSION'", "name": "'$VERSION'", "body": "Release version '$VERSION'", "draft": false, "prerelease": false}' \
+            "https://api.github.com/repos/YQBaobao/rocketmq-dashboard/releases")
+          
+          echo "Response from create release: $RESPONSE"
+          # 使用 env 设置环境变量
+          echo "UPLOAD_URL=$(echo $RESPONSE | jq -r .upload_url | sed -e 's/{?name,label}//')" >> $GITHUB_ENV
+
+      - name: 找到 JAR 文件
+        id: find_jar
+        run: |
+          JAR_FILE=$(find target -name "rocketmq-dashboard-*.jar" -print -quit)
+          echo "Found JAR file: $JAR_FILE"
+          echo "::set-output name=jar_file::$JAR_FILE"  # 设置输出变量
+
+      - name: 上传JAR到GitHub发布
+        run: |
+          VERSION="v$(date +'%Y.%m.%d.%H%M%S')"  # 使用当前时间戳作为版本号，或手动设置
+          JAR_FILE="${{ steps.find_jar.outputs.jar_file }}"  # 获取 find_jar 步骤中的输出文件路径
+          if [[ -z "$JAR_FILE" ]]; then
+            echo "No JAR file found!"  # 如果没有找到文件，输出提示
+            exit 1
+          fi
+          
+          # 使用环境变量传递 upload_url
+          echo "Final upload_url: $UPLOAD_URL"
+          
+          # 上传 JAR 文件到 GitHub Release
+          curl -X POST --data-binary @$JAR_FILE \
+            -H "Authorization: token ${{ secrets.GTHUB_TOKEN }}" \
+            -H "Content-Type: application/octet-stream" \
+            "$UPLOAD_URL?name=$(basename $JAR_FILE)"  # 使用文件名作为上传时的文件名
