@@ -33,15 +33,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: YQBaobao/rocketmq-dashboard
-          token: ${{ secrets.secrets.ACTIONS_TOKEN }}
+          token: ${{ secrets.ACTIONS_TOKEN }}
           path: rocketmq-dashboard
 
       # - name: 创建 target 目录
       #   run: mkdir ./rocketmq-dashboard/target
-
       # - name: 复制 JAR 文件以部署存储库
       #   run: cp ./target/rocketmq-dashboard-*.jar ./rocketmq-dashboard/target
-
       # - name: 提交 JAR 并将其推送到 RocketMQ-dashboard-jar 存储库
       #   run: |
       #     cd rocketmq-dashboard
