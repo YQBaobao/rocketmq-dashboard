@@ -51,6 +51,19 @@ public class ConsumerController {
         return consumerService.queryGroupList(skipSysGroup, address);
     }
 
+    @RequestMapping(value = "/group.refresh")
+    @ResponseBody
+    public Object refresh(String address,
+        String consumerGroup) {
+        return consumerService.refreshGroup(address, consumerGroup);
+    }
+
+    @RequestMapping(value = "group.refresh.all")
+    @ResponseBody
+    public Object refreshAll(String address) {
+        return consumerService.refreshAllGroup(address);
+    }
+
     @RequestMapping(value = "/group.query")
     @ResponseBody
     public Object groupQuery(@RequestParam String consumerGroup, String address) {
