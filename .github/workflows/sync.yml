@@ -14,7 +14,7 @@ jobs:
     - name: 检查 fork 存储库
       uses: actions/checkout@v2
       with:
-        fetch-depth: 0 # 获取完整历史以便后续操作
+        fetch-depth: 0
 
     - name: Set up Git
       run: |
@@ -26,31 +26,19 @@ jobs:
         git remote add upstream https://github.com/apache/rocketmq-dashboard.git
         git fetch upstream
 
-    - name: Save workflow files
-      run: |
-        # 将 .github/workflows/ 目录保存到临时目录
-        mkdir -p /tmp/workflows
-        cp -r .github/workflows/* /tmp/workflows/ || true
-
     - name: Merge upstream changes into fork
       run: |
         git checkout master
-        # 重置到上游 master 分支
-        git reset --hard upstream/master
-
-    - name: Restore workflow files
-      run: |
-        # 恢复保存的 workflow 文件
-        mkdir -p .github/workflows
-        cp -r /tmp/workflows/* .github/workflows/ || true
-        # 检查是否有更改需要提交
-        if git diff --quiet; then
-          echo "No changes to commit."
-        else
+        # 尝试合并，使用 ours 策略保留 .github/workflows/ 的内容
+        git merge upstream/master --allow-unrelated-histories -X ours -- .github/workflows/ || true
+        # 检查是否有未解决的冲突
+        if git status | grep -q "fix conflicts"; then
+          echo "Merge conflicts detected. Keeping fork's workflow files."
+          git checkout --ours -- .github/workflows/
           git add .github/workflows/
-          git commit -m "Restore workflow files after syncing with upstream"
+          git commit -m "Resolve conflicts by keeping fork's workflow files"
         fi
 
     - name: Push changes to fork
       run: |
-        git push origin master --force
+        git push origin master
