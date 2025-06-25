@@ -23,8 +23,13 @@ jobs:
           distribution: 'temurin'
           architecture: x64
 
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: 构建 RocketMQ 仪表板 JAR
-        run: mvn clean package -Dmaven.test.skip=true
+        run: CI=false mvn clean package -Dmaven.test.skip=true
 
       - name: 列出目标目录中的文件
         run: ls -l ./target/
