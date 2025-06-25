@@ -1,0 +1,56 @@
+name: 与上游同步分叉
+
+on:
+  schedule:
+    # - cron: '0 0 * * *'  # 每天自动同步
+    - cron: '0 0 1-31/5 * *' # 每5天在UTC时间午夜运行一次
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 检查 fork 存储库
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # 获取完整历史以便后续操作
+
+    - name: Set up Git
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+
+    - name: Add upstream remote
+      run: |
+        git remote add upstream https://github.com/apache/rocketmq-dashboard.git
+        git fetch upstream
+
+    - name: Save workflow files
+      run: |
+        # 将 .github/workflows/ 目录保存到临时目录
+        mkdir -p /tmp/workflows
+        cp -r .github/workflows/* /tmp/workflows/ || true
+
+    - name: Merge upstream changes into fork
+      run: |
+        git checkout master
+        # 重置到上游 master 分支
+        git reset --hard upstream/master
+
+    - name: Restore workflow files
+      run: |
+        # 恢复保存的 workflow 文件
+        mkdir -p .github/workflows
+        cp -r /tmp/workflows/* .github/workflows/ || true
+        # 检查是否有更改需要提交
+        if git diff --quiet; then
+          echo "No changes to commit."
+        else
+          git add .github/workflows/
+          git commit -m "Restore workflow files after syncing with upstream"
+        fi
+
+    - name: Push changes to fork
+      run: |
+        git push origin master --force
