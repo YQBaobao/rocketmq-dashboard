@@ -16,10 +16,10 @@ jobs:
       - name: 查看 RocketMQ 仪表板存储库
         uses: actions/checkout@v4
 
-      - name: 设置 JDK 11
+      - name: 设置 JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
           architecture: x64
 
