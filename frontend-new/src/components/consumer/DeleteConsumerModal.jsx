@@ -15,18 +15,15 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
-import { Modal, Spin, Checkbox, Button, notification } from 'antd';
-import { remoteApi } from '../../api/remoteApi/remoteApi';
-import { useLanguage } from '../../i18n/LanguageContext';
+import React, {useEffect, useState} from 'react';
+import {Button, Checkbox, Modal, notification, Spin} from 'antd';
+import {remoteApi} from '../../api/remoteApi/remoteApi';
 
-const DeleteConsumerModal = ({ visible, group, onCancel, onSuccess }) => {
-    const { t } = useLanguage();
+const DeleteConsumerModal = ({visible, group, onCancel, onSuccess, t}) => {
     const [brokerList, setBrokerList] = useState([]);
     const [selectedBrokers, setSelectedBrokers] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // 获取Broker列表
     useEffect(() => {
         const fetchBrokers = async () => {
             if (!visible) return;
@@ -45,10 +42,9 @@ const DeleteConsumerModal = ({ visible, group, onCancel, onSuccess }) => {
         fetchBrokers();
     }, [visible, group]);
 
-    // 处理删除提交
     const handleDelete = async () => {
         if (selectedBrokers.length === 0) {
-            notification.warning({ message: t.PLEASE_SELECT_BROKER });
+            notification.warning({message: t.PLEASE_SELECT_BROKER});
             return;
         }
 
@@ -60,7 +56,7 @@ const DeleteConsumerModal = ({ visible, group, onCancel, onSuccess }) => {
             );
 
             if (response.status === 0) {
-                notification.success({ message: t.DELETE_SUCCESS });
+                notification.success({message: t.DELETE_SUCCESS});
                 onSuccess();
                 onCancel();
             }
@@ -90,9 +86,9 @@ const DeleteConsumerModal = ({ visible, group, onCancel, onSuccess }) => {
             ]}
         >
             <Spin spinning={loading}>
-                <div style={{ marginBottom: 16 }}>{t.SELECT_DELETE_BROKERS}:</div>
+                <div style={{marginBottom: 16}}>{t.SELECT_DELETE_BROKERS}:</div>
                 <Checkbox.Group
-                    style={{ width: '100%' }}
+                    style={{width: '100%'}}
                     value={selectedBrokers}
                     onChange={values => setSelectedBrokers(values)}
                 >

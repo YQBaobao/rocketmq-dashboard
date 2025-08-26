@@ -33,10 +33,9 @@ const MessageQueryPage = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
 
-    // Topic 查询状态
     const [allTopicList, setAllTopicList] = useState([]);
     const [selectedTopic, setSelectedTopic] = useState(null);
-    const [timepickerBegin, setTimepickerBegin] = useState(moment().subtract(1, 'hour')); // 默认一小时前
+    const [timepickerBegin, setTimepickerBegin] = useState(moment().subtract(1, 'hour'));
     const [timepickerEnd, setTimepickerEnd] = useState(moment());
     const [messageShowList, setMessageShowList] = useState([]);
     const [paginationConf, setPaginationConf] = useState({
@@ -146,7 +145,6 @@ const MessageQueryPage = () => {
                 message: t.ERROR,
                 description: t.QUERY_FAILED,
             });
-            console.error("查询失败:", error);
         } finally {
             setLoading(false);
         }
@@ -182,7 +180,6 @@ const MessageQueryPage = () => {
                 message: t.ERROR,
                 description: t.QUERY_FAILED,
             });
-            console.error("查询失败:", error);
         } finally {
             setLoading(false);
         }
@@ -241,7 +238,6 @@ const MessageQueryPage = () => {
                 message: t.ERROR,
                 description: t.RESEND_FAILED,
             });
-            console.error("重发失败:", error);
         } finally {
             setLoading(false);
             // Optionally, you might want to refresh the message detail after resend
@@ -455,7 +451,6 @@ const MessageQueryPage = () => {
                                         </Button>
                                     </Form.Item>
                                 </Form>
-                                {/* Message ID 查询结果通常直接弹窗显示，这里不需要表格 */}
                             </div>
                         </TabPane>
                     </Tabs>

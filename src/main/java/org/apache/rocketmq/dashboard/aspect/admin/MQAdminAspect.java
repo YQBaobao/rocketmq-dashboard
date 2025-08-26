@@ -57,6 +57,10 @@ public class MQAdminAspect {
         METHODS_TO_CHECK.add("examineConsumerConnectionInfo");
         METHODS_TO_CHECK.add("examineConsumeStats");
         METHODS_TO_CHECK.add("examineProducerConnectionInfo");
+        METHODS_TO_CHECK.add("fetchBrokerRuntimeStats");
+        METHODS_TO_CHECK.add("fetchAllTopicList");
+        METHODS_TO_CHECK.add("examineTopicRouteInfo");
+        METHODS_TO_CHECK.add("queryTopicConsumeByWho");
     }
 
     // Pointcut remains the same, targeting methods in MQAdminExtImpl
@@ -76,7 +80,7 @@ public class MQAdminAspect {
         String methodName = joinPoint.getSignature().getName();
 
         try {
-            if (isPoolConfigIsolatedByUser(rmqConfigure.isLoginRequired(), methodName)) {
+            if (isPoolConfigIsolatedByUser(rmqConfigure.isLoginRequired(), rmqConfigure.getAuthMode(), methodName)) {
                 currentUserInfo = (UserInfo) UserInfoContext.get(WebUtil.USER_NAME);
                 // 2. Borrow the user-specific MQAdminExt instance.
                 //    currentUser.getName() is assumed to be the AccessKey, and currentUser.getPassword() is SecretKey.
@@ -119,8 +123,8 @@ public class MQAdminAspect {
         }
     }
 
-    private boolean isPoolConfigIsolatedByUser(boolean loginRequired, String methodName) {
-        if (!loginRequired) {
+    private boolean isPoolConfigIsolatedByUser(boolean loginRequired, String authMode, String methodName) {
+        if (!loginRequired || authMode.equals("file")) {
             return false;
         } else {
             return !METHODS_TO_CHECK.contains(methodName);

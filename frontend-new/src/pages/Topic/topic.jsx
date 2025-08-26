@@ -100,6 +100,16 @@ const DeployHistoryList = () => {
     }, [filterStr, filterNormal, filterDelay, filterFifo, filterTransaction,
         filterUnspecified, filterRetry, filterDLQ, filterSystem, allTopicList]);
 
+    useEffect(() => {
+        const userPermission = localStorage.getItem('userrole');
+        console.log(userPermission);
+        if (userPermission == 2) {
+            setWriteOperationEnabled(false);
+        } else {
+            setWriteOperationEnabled(true);
+        }
+    }, []);
+
     // Close functions for Modals
     const closeAddUpdateDialog = () => {
         setIsAddUpdateTopicModalVisible(false);
@@ -173,7 +183,6 @@ const DeployHistoryList = () => {
     };
 
 
-
     const filterList = (currentPage) => {
         const lowExceptStr = filterStr.toLowerCase();
         const canShowList = allTopicList.filter((topic, index) => {
@@ -223,7 +232,7 @@ const DeployHistoryList = () => {
 
         try {
             if (isUpdate) {
-                 // topic 已经是字符串
+                // topic 已经是字符串
                 const configResult = await remoteApi.getTopicConfig(topic);
                 if (configResult.status === 0) {
                     const dataToSet = Array.isArray(configResult.data) ? configResult.data : [configResult.data];
@@ -257,7 +266,7 @@ const DeployHistoryList = () => {
             return;
         }
 
-        if(!isUpdate){
+        if (!isUpdate) {
             const clusterResult = await remoteApi.getClusterList();
             if (clusterResult.status === 0) {
                 setAllClusterNameList(Object.keys(clusterResult.data.clusterInfo.clusterAddrTable));
@@ -276,7 +285,7 @@ const DeployHistoryList = () => {
             if (result.status === 0) {
                 messageApi.success(t.TOPIC_OPERATION_SUCCESS);
                 closeAddUpdateDialog();
-                if(!isUpdateMode) {
+                if (!isUpdateMode) {
                     await getTopicList()
                 }
             } else {

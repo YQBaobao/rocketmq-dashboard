@@ -250,17 +250,16 @@ const DashboardPage = () => {
                 const brokerAddrTable = resp.data.clusterInfo.brokerAddrTable; // Corrected to brokerAddrTable
                 const brokerDetail = resp.data.brokerServer;
                 const clusterMap = tools.generateBrokerMap(brokerDetail, clusterAddrTable, brokerAddrTable);
-
                 let brokerArray = [];
                 Object.values(clusterMap).forEach(brokersInCluster => {
                     brokerArray = brokerArray.concat(brokersInCluster);
                 });
 
-                // Update broker table data
-                setBrokerTableData(brokerArray.map(broker => ({
+                const newData = brokerArray.map(broker => ({
                     ...broker,
-                    key: broker.brokerName // Ant Design Table needs a unique key
-                })));
+                    key: broker.brokerName,
+                }));
+                setBrokerTableData(newData);
 
                 brokerArray.sort((firstBroker, lastBroker) => {
                     const firstTotalMsg = parseFloat(firstBroker.msgGetTotalTodayNow || 0);
@@ -347,7 +346,7 @@ const DashboardPage = () => {
 
     const brokerColumns = [
         {title: t.BROKER_NAME, dataIndex: 'brokerName', key: 'brokerName'},
-        {title: t.BROKER_ADDR, dataIndex: 'brokerAddress', key: 'brokerAddress'},
+        {title: t.BROKER_ADDR, dataIndex: 'address', key: 'address'},
         {
             title: t.TOTAL_MSG_RECEIVED_TODAY,
             dataIndex: 'msgGetTotalTodayNow',

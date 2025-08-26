@@ -15,47 +15,45 @@
  * limitations under the License.
  */
 
-import { Input, Select } from 'antd';
-import React, { useState, useEffect } from 'react';
+import {Input, Select} from 'antd';
+import React, {useEffect, useState} from 'react';
 
-const { Option } = Select;
+const {Option} = Select;
 
-// Subject 类型枚举
+
 const subjectTypes = [
-    { value: 'User', label: 'User' },
+    {value: 'User', label: 'User'},
 ];
 
-const SubjectInput = ({ value, onChange, disabled }) => {
-    // 解析传入的 value，将其拆分为 type 和 name
+const SubjectInput = ({value, onChange, disabled, t}) => {
+
     const parseValue = (val) => {
         if (!val || typeof val !== 'string') {
-            return { type: subjectTypes[0].value, name: '' }; // 默认值
+            return {type: subjectTypes[0].value, name: ''}; // 默认值
         }
         const parts = val.split(':');
         if (parts.length === 2 && subjectTypes.some(t => t.value === parts[0])) {
-            return { type: parts[0], name: parts[1] };
+            return {type: parts[0], name: parts[1]};
         }
-        return { type: subjectTypes[0].value, name: val }; // 如果格式不匹配，将整个值作为 name，类型设为默认
+        return {type: subjectTypes[0].value, name: val};
     };
 
     const [currentType, setCurrentType] = useState(() => parseValue(value).type);
     const [currentName, setCurrentName] = useState(() => parseValue(value).name);
 
-    // 当外部 value 变化时，更新内部状态
     useEffect(() => {
         const parsed = parseValue(value);
         setCurrentType(parsed.type);
         setCurrentName(parsed.name);
     }, [value]);
 
-    // 当类型或名称变化时，通知 Form.Item
     const triggerChange = (changedType, changedName) => {
         if (onChange) {
-            // 只有当名称不为空时才组合，否则只返回类型或空字符串
+
             if (changedName) {
                 onChange(`${changedType}:${changedName}`);
-            } else if (changedType) { // 如果只选择了类型，但名称为空，则不组合
-                onChange(''); // 或者根据需求返回 'User:' 等，但通常这种情况下不应该有值
+            } else if (changedType) {
+                onChange('');
             } else {
                 onChange('');
             }
@@ -76,7 +74,7 @@ const SubjectInput = ({ value, onChange, disabled }) => {
     return (
         <Input.Group compact>
             <Select
-                style={{ width: '30%' }}
+                style={{width: '30%'}}
                 value={currentType}
                 onChange={onTypeChange}
                 disabled={disabled}
@@ -88,10 +86,10 @@ const SubjectInput = ({ value, onChange, disabled }) => {
                 ))}
             </Select>
             <Input
-                style={{ width: '70%' }}
+                style={{width: '70%'}}
                 value={currentName}
                 onChange={onNameChange}
-                placeholder="请输入名称 (例如: yourUsername)"
+                placeholder={t.PLEASE_INPUT_NAME}
                 disabled={disabled}
             />
         </Input.Group>
